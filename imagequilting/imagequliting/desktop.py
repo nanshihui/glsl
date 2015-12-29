@@ -8,7 +8,7 @@ from PyQt4.QtCore import pyqtSignature
 from PyQt4.QtGui import QMainWindow
 from PyQt4 import QtGui, QtCore
 from Ui_desktop import Ui_MainWindow
- 
+import imagequlit
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -24,6 +24,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         QMainWindow.__init__(self, parent)
         self.setupUi(self)
+        self.filepath=None
     def chooseFile(self):
         dialog = QtGui.QFileDialog()
         
@@ -41,14 +42,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             can be loaded.
         """
         pixmap=QtGui.QPixmap()
-
+        self.filepath=imageFile
         if pixmap.load(imageFile):
 
             self.scene=QtGui.QGraphicsScene(self)
             item=QtGui.QGraphicsPixmapItem(pixmap)
             self.scene.addItem(item)
             component.setScene(self.scene)
-    
+
+
         else:
             QtGui.QMessageBox.warning(self, "Cannot open file",
                     "文件无法打开",
@@ -56,17 +58,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     QtGui.QMessageBox.NoButton)
     @pyqtSignature("")
     def on_fileopen_clicked(self):
-        print '123'
+
         self.chooseFile()
-        # TODO: not implemented yet
-        
-        raise NotImplementedError
+
     
     @pyqtSignature("")
     def on_dealwith_clicked(self):
-        print 'this is dealwith'
-        # TODO: not implemented yet
-        raise NotImplementedError
+        result,path=imagequlit.doqilt(self.filepath)
+        if result:
+            self.openImageFile(path,self.pic2)
+
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     ui = MainWindow()
